@@ -1,75 +1,7 @@
-# AI Vehicle Prompt Studio
-
-[
-[
-
-AI Vehicle Prompt Studio is a lightweight, interactive web application designed for creative technologists and AI enthusiasts to generate cinematic prompts for video AI tools like Sora or similar models. Specializing in automotive scenes, it allows users to configure car details, environments, camera angles, and visual effects to craft hyper-detailed, production-ready prompts. Built as a single HTML file, it's perfect for rapid prototyping, content creation, and workflow integration in digital ateliers.
-
-[Live Demo](https://your-github-repo-link-or-hosting-url) | [Report Bug](https://github.com/yourusername/ai-vehicle-prompt-studio/issues/new) | [Request Feature](https://github.com/yourusername/ai-vehicle-prompt-studio/issues/new)
-
-## Table of Contents
-
-- [About the Project](#about-the-project)
-- [Built With](#built-with)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Features](#features)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgments](#acknowledgments)
-
-
-## About the Project
-
-In the world of AI-driven video generation, crafting the perfect prompt can turn a simple idea into a blockbuster scene. AI Vehicle Prompt Studio streamlines this process for automotive-focused creators, blending structure with creative mischief. Whether you're visualizing a Porsche tearing through a cyberpunk city or a Tesla gliding under golden hour light, this tool generates varied, optimized prompts that emphasize physics, aesthetics, and cinematic flair—avoiding repetition for fresh outputs every time.
-
-This project was born from a passion for AI prompt engineering, vector graphics, and Texas-inspired design aesthetics, ensuring a smooth, performant experience with hardware-accelerated animations and glassmorphism UI elements.
-
-### Why Use This?
-
-- **Efficiency**: No installations— just open and create.
-- **Customization**: Tailor prompts to specific cars, scenes, and styles without starting from scratch.
-- **Portability**: Single-file deployment for easy sharing or embedding in workflows.
-- **Inspiration**: Randomize configurations for serendipitous ideas, ideal for hyper-focused creative sessions.
-
-*(back to top)*
-
-## Built With
-
-This project is built as a self-contained HTML application, leveraging modern web technologies for a responsive, performant interface:
-
-- [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML)
-- [CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS) with Tailwind CSS for utility-first styling
-- [Alpine.js](https://alpinejs.dev/) for reactive, lightweight JavaScript interactions
-- [Animate.css](https://animate.style/) for subtle entrance animations
-- [Satoshi Font](https://fontshare.com/fonts/satoshi) via Fontshare for clean typography
-- LocalStorage for persisting presets and recent prompts
-
-No backend or external dependencies required—runs entirely in the browser.
-
-*(back to top)*
-
-## Getting Started
-
-### Prerequisites
-
-- A modern web browser (Chrome, Firefox, Safari, or Edge).
-- JavaScript enabled (noscript fallback included).
-
-
-### Installation
-
-1. Clone or download the repository:
-
-```
-git clone https://github.com/yourusername/ai-vehicle-prompt-studio.git
-```
 
 2. Open the `index.html` file in your browser:
-    - Double-click the file, or
-    - Use a local server like Live Server in VS Code for best performance (avoids CORS issues with local files).
+- Double-click the file, or
+- Use a local server like Live Server in VS Code for best performance (avoids CORS issues with local files).
 
 That's it! No build steps or package managers needed.
 
@@ -78,17 +10,19 @@ That's it! No build steps or package managers needed.
 ## Usage
 
 1. **Configure Your Scene**:
-    - Select a car make (e.g., Porsche, Tesla) and model from the dropdowns.
-    - Choose colors, scene types (e.g., Mountain Road, Cyberpunk City), camera movements, lighting, weather, and film styles.
-    - Toggle additional elements like reflections, motion blur, or slow motion for enhanced details.
+- Select a car make (e.g., Porsche, Tesla) and model from the dropdowns.
+- Choose colors, scene types (e.g., Mountain Road, Cyberpunk City), camera movements, lighting, weather, and film styles.
+- Toggle additional elements like reflections, motion blur, or slow motion for enhanced details.
+
 2. **Generate Prompt**:
-    - Click "Generate Prompt" to create a unique, cinematic description. Prompts vary based on a seed for freshness.
-    - View word/character counts and the full output in the right panel.
+- Click "Generate Prompt" to create a unique, cinematic description. Prompts vary based on a seed for freshness.
+- View word/character counts and the full output in the right panel.
+
 3. **Interact and Save**:
-    - Copy the prompt to your clipboard for use in AI tools.
-    - Save/load presets via modals (stored in browser LocalStorage).
-    - Browse recent prompts or randomize all settings for quick ideation.
-    - Simulate API sending (extendable for real integrations).
+- Copy the prompt to your clipboard for use in AI tools.
+- Save/load presets via modals (stored in browser LocalStorage).
+- Browse recent prompts or randomize all settings for quick ideation.
+- Simulate API sending (extendable for real integrations).
 
 Example Generated Prompt:
 > Hyper-detailed explosive action sweeping view capturing a elegant racing red Porsche 911 GT3 racing fiercely along the Desert Highway clear skies terrain golden hour illumination, incorporating mirror-like surface gleams and polished accents, trailing velocity streaks for velocity emphasis. Emphasize aggressive aerodynamic lines, road adhesion physics, and ecosystem fusion through god rays and atmospheric particles. Deliver in ultra-high-definition clarity, evoking premium visual effects mastery, enhanced by intense pursuits, heroic angles, and orchestral swells.
@@ -144,7 +78,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ## Contact
 
-Austin Carson - [@yourtwitter](https://twitter.com/yourhandle) - austin@yourdomain.com
+Austin Carson
 
 Project Link: [https://github.com/yourusername/ai-vehicle-prompt-studio](https://github.com/yourusername/ai-vehicle-prompt-studio)
 
