@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Vehicle Prompt Studio | Next-Gen AI Video Prompts</title>
+  <meta name="description" content="Craft cinematic automotive prompts with AI-powered precision. Generate, save, and reuse presets—then copy or send to your API workflow." />
+  <meta name="theme-color" content="#f5f5f5" />
+
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="AI Vehicle Prompt Studio" />
+  <meta property="og:description" content="Generate cinematic automotive prompts. Save presets, copy, and send to API." />
+  <meta property="og:type" content="website" />
+
+
+  <!-- Fonts / CSS -->
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+  <link href="https://api.fontshare.com/css?f[]=satoshi@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+
+  <style>
+    :root{
+      --primary:#6366f1; --primary-dark:#4f46e5; --secondary:#10b981; --light:#f8fafc; --lighter:#fafafa;
+    }
+    html,body{height:100%}
+    body{
+      font-family: Satoshi, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--lighter);
+      background-image:
+        radial-gradient(at 80% 0%, hsla(60, 20%, 95%, 0.3) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, hsla(0, 0%, 98%, 0.2) 0px, transparent 50%),
+        linear-gradient(135deg, hsla(240, 10%, 98%, 0.1) 0%, hsla(300, 10%, 96%, 0.1) 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      color: #1f2937;
+      transform: translateZ(0); /* Hardware acceleration for smooth animations */
+    }
+    @keyframes gradientShift {
+      0%, 100% {
+        background-position: 0% 50%, 100% 50%, 0% 0%;
+      }
+      50% {
+        background-position: 100% 50%, 0% 50%, 100% 0%;
+      }
+    }
+    .gradient-border{position:relative;border-radius:1rem}
+    .gradient-border::before{
+      content:""; position:absolute; inset:-1px; border-radius:1rem;
+      background:linear-gradient(45deg, rgba(99,102,241,.5), rgba(16,185,129,.3), rgba(244,63,94,.2));
+      z-index:-1; opacity:.7;
+    }
+    .card-glass{
+      background:rgba(255,255,255,.8); backdrop-filter:blur(12px);
+      border:1px solid rgba(0,0,0,.05); box-shadow:0 8px 32px 0 rgba(0,0,0,.1);
+    }
+    .btn-primary{
+      background:linear-gradient(45deg,var(--primary),var(--primary-dark));
+      box-shadow:0 4px 15px -3px rgba(99,102,241,.3); transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 20px -3px rgba(99,102,241,.4)}
+    .btn-secondary{
+      background:rgba(255,255,255,.7); border:1px solid rgba(99,102,241,.3); transition:background .2s ease, border-color .2s ease;
+      color: #1f2937;
+    }
+    .btn-secondary:hover{border-color:var(--primary); background:rgba(255,255,255,.9)}
+
+
+    /* Unified select styling (removed duplication) */
+    select{
+      -webkit-appearance:none; -moz-appearance:none; appearance:none;
+      background-color:rgba(255,255,255,.6); border:1px solid rgba(71,85,105,.5); color:#1f2937;
+      border-radius:.75rem; padding:.75rem 1rem; width:100%; transition:box-shadow .2s ease,border-color .2s ease;
+      background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23374752'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3e%3c/svg%3e");
+      background-position:right 1rem center; background-repeat:no-repeat; background-size:1.25rem; padding-right:2.5rem;
+    }
+    select:focus{outline:none; border-color:#6366f1; box-shadow:0 0 0 2px rgba(99,102,241,.25)}
+    select:-moz-focusring{color:transparent; text-shadow:0 0 0 #1f2937}
+
+
+    .animate-float{animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+
+    /* Motion-reduction */
+    @media (prefers-reduced-motion: reduce){
+      .animate-float, .animate__animated{animation:none !important}
+      *{scroll-behavior:auto}
+    }
+
+
+    [x-cloak]{display:none !important}
+  </style>
+</head>
+
+
+<body class="min-h-screen" x-data="app" x-cloak>
+  <noscript>
+    <div class="mx-auto max-w-3xl p-4 m-4 rounded-lg bg-rose-100 border border-rose-300 text-rose-800">
+      This app needs JavaScript enabled. Please enable it to use AI Video Prompt Studio.
+    </div>
+  </noscript>
+
+
+  <!-- Decorative Background (hidden from AT) -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-indigo-200/10 blur-3xl animate-float"></div>
+    <div class="absolute top-1/3 right-1/4 w-96 h-96 rounded-full bg-emerald-200/10 blur-3xl animate-float" style="animation-delay:2s;"></div>
+    <div class="absolute bottom-1/4 left-1/2 w-80 h-80 rounded-full bg-rose-200/10 blur-3xl animate-float" style="animation-delay:4s;"></div>
+  </div>
+
+
+  <main class="container mx-auto px-4 py-12 relative z-10">
+    <!-- Header -->
+    <header class="text-center mb-16 animate__animated animate__fadeIn">
+      <div class="inline-flex items-center justify-center mb-4 px-4 py-2 rounded-full bg-indigo-100 border border-indigo-300">
+        <span class="text-sm font-medium text-indigo-700" aria-label="Beta badge">BETA</span>
+      </div>
+      <h1 class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-600">
+        AI Vehicle Prompt Studio
+      </h1>
+      <p class="text-xl text-gray-700 max-w-2xl mx-auto">
+        Craft cinematic automotive masterpieces with AI-powered precision
+      </p>
+    </header>
+
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Configuration Panel -->
+      <section class="lg:col-span-2 gradient-border" aria-labelledby="scene-config-heading">
+        <div class="card-glass rounded-xl p-8 h-full">
+          <div class="flex items-center justify-between mb-8">
+            <h2 id="scene-config-heading" class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              Scene Configuration
+            </h2>
+            <button type="button" @click="randomizeAll()" class="btn-secondary px-4 py-2 rounded-lg font-medium flex items-center gap-2 text-sm">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Randomize
+            </button>
+          </div>
+
+
+          <form class="grid grid-cols-1 md:grid-cols-2 gap-6" @submit.prevent>
+            <!-- Car Make -->
+            <div>
+              <label for="carMake" class="block text-sm font-medium mb-3 text-gray-700">Car Make<span class="sr-only"> (required)</span></label>
+              <select id="carMake" name="carMake" x-model="config.carMake" @change="config.carModel=''"
+                required
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" disabled selected>Select make</option>
+                <option>Porsche</option><option>Tesla</option><option>BYD</option><option>NIO</option>
+                <option>Xpeng</option><option>Ferrari</option><option>Lamborghini</option><option>Custom</option>
+              </select>
+            </div>
+
+
+            <!-- Car Model -->
+            <div>
+              <label for="carModel" class="block text-sm font-medium mb-3 text-gray-700">Car Model<span class="sr-only"> (required)</span></label>
+              <select id="carModel" name="carModel" x-model="config.carModel" required
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" disabled selected>Select model</option>
+                <template x-if="config.carMake==='Porsche'">
+                  <optgroup label="Porsche">
+                    <option>911 GT3</option><option>Taycan Turbo S</option><option>Cayenne</option><option>Panamera</option>
+                  </optgroup>
+                </template>
+                <template x-if="config.carMake==='Tesla'">
+                  <optgroup label="Tesla">
+                    <option>Model S Plaid</option><option>Model 3 Performance</option><option>Model X</option><option>Cybertruck</option>
+                  </optgroup>
+                </template>
+                <template x-if="config.carMake==='BYD'">
+                  <optgroup label="BYD"><option>Han EV</option><option>Tang EV</option><option>Seal</option><option>Dolphin</option></optgroup>
+                </template>
+                <template x-if="config.carMake==='NIO'">
+                  <optgroup label="NIO"><option>ET7</option><option>ET5</option><option>ES8</option><option>EC7</option></optgroup>
+                </template>
+                <template x-if="config.carMake==='Xpeng'">
+                  <optgroup label="Xpeng"><option>P7</option><option>G9</option><option>P5</option></optgroup>
+                </template>
+                <template x-if="config.carMake==='Ferrari'">
+                  <optgroup label="Ferrari"><option>488 Spider</option><option>SF90 Stradale</option><option>Roma</option><option>F8 Tributo</option></optgroup>
+                </template>
+                <template x-if="config.carMake==='Lamborghini'">
+                  <optgroup label="Lamborghini"><option>Huracán</option><option>Aventador</option><option>Urus</option><option>Revuelto</option></optgroup>
+                </template>
+                <template x-if="config.carMake==='Custom'">
+                  <option>Custom Model</option>
+                </template>
+              </select>
+
+
+              <input x-show="config.carModel==='Custom Model'" x-model="config.customCarModel"
+                     type="text" inputmode="text" autocomplete="off"
+                     placeholder="Enter custom model"
+                     class="mt-3 w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900" />
+            </div>
+
+
+            <!-- Car Color -->
+            <div>
+              <label for="carColor" class="block text-sm font-medium mb-3 text-gray-700">Car Color</label>
+              <select id="carColor" name="carColor" x-model="config.carColor"
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" selected>Select color</option>
+                <option>Midnight Black</option><option>Racing Red</option><option>Metallic Silver</option><option>Pearl White</option>
+                <option>Electric Blue</option><option>Chrome Gold</option><option>Matte Gray</option><option>Neon Green</option>
+              </select>
+            </div>
+
+
+            <!-- Scene Type -->
+            <div>
+              <label for="sceneType" class="block text-sm font-medium mb-3 text-gray-700">Scene Type<span class="sr-only"> (required)</span></label>
+              <select id="sceneType" name="sceneType" x-model="config.sceneType" required
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" disabled selected>Select scene</option>
+                <option>Urban Night</option><option>Mountain Road</option><option>Desert Highway</option><option>Coastal Drive</option>
+                <option>Rainy City</option><option>Snowy Landscape</option><option>Race Track</option><option>Cyberpunk City</option>
+              </select>
+            </div>
+
+
+            <!-- Camera Movement -->
+            <div>
+              <label for="cameraMovement" class="block text-sm font-medium mb-3 text-gray-700">Camera Movement</label>
+              <select id="cameraMovement" name="cameraMovement" x-model="config.cameraMovement"
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" selected>Select movement</option>
+                <option>Tracking Shot</option><option>Drone Flyover</option><option>FPV Racing</option>
+                <option>Steadicam Follow</option><option>Crane Shot</option><option>Dolly Zoom</option><option>Helicopter Chase</option>
+              </select>
+            </div>
+
+
+            <!-- Lighting -->
+            <div>
+              <label for="lighting" class="block text-sm font-medium mb-3 text-gray-700">Lighting</label>
+              <select id="lighting" name="lighting" x-model="config.lighting"
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" selected>Select lighting</option>
+                <option>Golden Hour</option><option>Neon Lights</option><option>Moonlit</option>
+                <option>High Contrast</option><option>Soft Diffused</option><option>Backlit</option><option>Practical Lights</option>
+              </select>
+            </div>
+
+
+            <!-- Weather -->
+            <div>
+              <label for="weather" class="block text-sm font-medium mb-3 text-gray-700">Weather</label>
+              <select id="weather" name="weather" x-model="config.weather"
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" selected>Select weather</option>
+                <option>Clear Skies</option><option>Light Rain</option><option>Heavy Rain</option>
+                <option>Foggy</option><option>Snowing</option><option>Windy</option><option>Stormy</option>
+              </select>
+            </div>
+
+
+            <!-- Film Style -->
+            <div>
+              <label for="filmStyle" class="block text-sm font-medium mb-3 text-gray-700">Film Style</label>
+              <select id="filmStyle" name="filmStyle" x-model="config.filmStyle"
+                class="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300/50 text-gray-900">
+                <option value="" selected>Select style</option>
+                <option>Blockbuster</option><option>Documentary</option><option>Noir</option>
+                <option>Sci-Fi</option><option>Vintage</option><option>Anamorphic</option><option>Gritty</option>
+              </select>
+            </div>
+
+
+            <!-- Additional Elements -->
+            <fieldset class="md:col-span-2">
+              <legend class="block text-sm font-medium mb-3 text-gray-700">Additional Elements</legend>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <label class="flex items-center gap-3 p-3 rounded-lg bg-white/40 hover:bg-white/60 transition-colors cursor-pointer">
+                  <input type="checkbox" x-model="config.additionalElements.reflections" class="rounded bg-gray-200 border-gray-300 text-indigo-500 focus:ring-indigo-500" />
+                  <span class="text-gray-700">Reflections</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-lg bg-white/40 hover:bg-white/60 transition-colors cursor-pointer">
+                  <input type="checkbox" x-model="config.additionalElements.motionBlur" class="rounded bg-gray-200 border-gray-300 text-indigo-500 focus:ring-indigo-500" />
+                  <span class="text-gray-700">Motion Blur</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-lg bg-white/40 hover:bg-white/60 transition-colors cursor-pointer">
+                  <input type="checkbox" x-model="config.additionalElements.lensFlare" class="rounded bg-gray-200 border-gray-300 text-indigo-500 focus:ring-indigo-500" />
+                  <span class="text-gray-700">Lens Flare</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-lg bg-white/40 hover:bg-white/60 transition-colors cursor-pointer">
+                  <input type="checkbox" x-model="config.additionalElements.depthOfField" class="rounded bg-gray-200 border-gray-300 text-indigo-500 focus:ring-indigo-500" />
+                  <span class="text-gray-700">Shallow DOF</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-lg bg-white/40 hover:bg-white/60 transition-colors cursor-pointer">
+                  <input type="checkbox" x-model="config.additionalElements.slowMotion" class="rounded bg-gray-200 border-gray-300 text-indigo-500 focus:ring-indigo-500" />
+                  <span class="text-gray-700">Slow Motion</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-lg bg-white/40 hover:bg-white/60 transition-colors cursor-pointer">
+                  <input type="checkbox" x-model="config.additionalElements.rainDrops" class="rounded bg-gray-200 border-gray-300 text-indigo-500 focus:ring-indigo-500" />
+                  <span class="text-gray-700">Rain Drops</span>
+                </label>
+              </div>
+            </fieldset>
+
+
+            <!-- Actions -->
+            <div class="md:col-span-2 mt-4 flex flex-wrap gap-4">
+              <button type="button" @click="generatePrompt()" :disabled="isGenerating"
+                class="btn-primary px-6 py-3 text-white rounded-xl font-medium flex items-center gap-2 disabled:opacity-60">
+                <svg x-show="!isGenerating" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <svg x-show="isGenerating" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span x-text="isGenerating ? 'Generating…' : 'Generate Prompt'"></span>
+              </button>
+
+
+              <button type="button" @click="savePreset()" x-show="generatedPrompt" class="btn-secondary px-6 py-3 rounded-xl font-medium flex items-center gap-2">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                Save Preset
+              </button>
+
+
+              <button type="button" @click="loadPresetModal = true" class="btn-secondary px-6 py-3 rounded-xl font-medium flex items-center gap-2">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                </svg>
+                Load Preset
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+
+      <!-- Output Panel -->
+      <aside class="gradient-border" aria-labelledby="generated-prompt-heading">
+        <div class="card-glass rounded-xl p-8 h-full flex flex-col">
+          <h2 id="generated-prompt-heading" class="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-3">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Generated Prompt
+          </h2>
+
+
+          <div x-show="generatedPrompt" class="p-5 bg-white/60 rounded-xl mb-6 flex-grow overflow-y-auto border border-gray-300/50" aria-live="polite">
+            <p x-text="generatedPrompt" class="whitespace-pre-wrap text-gray-800 leading-relaxed"></p>
+          </div>
+
+
+          <div x-show="!generatedPrompt" class="p-5 bg-white/60 rounded-xl mb-6 flex-grow flex items-center justify-center border border-dashed border-gray-300/50">
+            <div class="text-center">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto text-gray-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              <p class="text-gray-500">Your cinematic prompt will appear here</p>
+            </div>
+          </div>
+
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="p-4 bg-white/60 rounded-xl text-center border border-gray-300/50">
+              <div class="text-2xl font-bold text-indigo-600" x-text="wordCount">0</div>
+              <div class="text-xs text-gray-500 uppercase tracking-wider mt-1">Words</div>
+            </div>
+            <div class="p-4 bg-white/60 rounded-xl text-center border border-gray-300/50">
+              <div class="text-2xl font-bold text-emerald-600" x-text="charCount">0</div>
+              <div class="text-xs text-gray-500 uppercase tracking-wider mt-1">Characters</div>
+            </div>
+          </div>
+
+
+          <div class="space-y-3">
+            <button type="button" @click="copyToClipboard()" x-show="generatedPrompt"
+              class="w-full btn-primary py-3 text-white rounded-xl font-medium flex items-center justify-center gap-2">
+              <svg x-show="!copied" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <svg x-show="copied" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span x-text="copied ? 'Copied!' : 'Copy to Clipboard'"></span>
+            </button>
+
+
+            <div class="sr-only" aria-live="polite"><span x-text="copied ? 'Prompt copied to clipboard.' : ''"></span></div>
+
+
+            <button type="button" @click="sendToAPI()" x-show="generatedPrompt" :disabled="isSending"
+              class="w-full btn-secondary py-3 rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-60">
+              <svg x-show="!isSending" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+              <svg x-show="isSending" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span x-text="isSending ? 'Sending…' : 'Send to AI API'"></span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+
+    <!-- Recent Prompts -->
+    <section x-show="recentPrompts.length>0" class="mt-12 gradient-border animate__animated animate__fadeIn" aria-labelledby="recent-prompts-heading">
+      <div class="card-glass rounded-xl p-8">
+        <h2 id="recent-prompts-heading" class="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-3">
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Recent Prompts
+        </h2>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <template x-for="(prompt, index) in recentPrompts" :key="index">
+            <button type="button" class="text-left p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-colors border border-gray-300/50 w-full"
+                    @click="loadRecentPrompt(index)">
+              <p class="text-gray-700 text-sm mb-3 line-clamp-3" x-text="prompt.text"></p>
+              <div class="flex justify-between items-center text-xs text-gray-500">
+                <span x-text="formatDate(prompt.timestamp)"></span>
+                <span x-text="prompt.wordCount + ' words'"></span>
+              </div>
+            </button>
+          </template>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer Credit -->
+  <footer class="text-center py-8 mt-12 border-t border-gray-200 text-sm text-gray-500">
+    CREATED BY AUSTIN CARSON
+  </footer>
+
+
+  <!-- Load Preset Modal -->
+  <div x-show="loadPresetModal"
+       class="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+       role="dialog" aria-modal="true" aria-labelledby="load-preset-title"
+       x-transition.opacity>
+    <div @click.away="loadPresetModal=false"
+         class="card-glass rounded-xl p-8 w-full max-w-md max-h-[80vh] overflow-y-auto">
+      <h3 id="load-preset-title" class="text-xl font-bold mb-6 text-gray-900">Load Preset</h3>
+
+
+      <div x-show="presets.length===0" class="text-center py-8 text-gray-500">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        No presets saved yet
+      </div>
+
+
+      <div class="space-y-3">
+        <template x-for="(preset, index) in presets" :key="index">
+          <div class="p-4 bg-white/60 rounded-xl hover:bg-white/80 transition-colors border border-gray-300/50 flex items-center justify-between">
+            <button type="button" class="text-left" @click="loadPreset(index)">
+              <h4 class="font-medium text-gray-800" x-text="preset.name || 'Unnamed Preset'"></h4>
+              <p class="text-xs text-gray-500" x-text="formatDate(preset.timestamp)"></p>
+            </button>
+            <button type="button" @click="deletePreset(index)" class="text-rose-500 hover:text-rose-600 p-1" aria-label="Delete preset">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </template>
+      </div>
+
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" @click="loadPresetModal=false" class="btn-secondary px-4 py-2 rounded-xl">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- API Response Modal -->
+  <div x-show="apiResponseModal"
+       class="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+       role="dialog" aria-modal="true" aria-labelledby="api-response-title"
+       x-transition.opacity>
+    <div @click.away="apiResponseModal=false"
+         class="card-glass rounded-xl p-8 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+      <h3 id="api-response-title" class="text-xl font-bold mb-6 text-gray-900">API Response</h3>
+
+
+      <div x-show="apiResponse" class="p-5 bg-white/60 rounded-xl mb-4 border border-gray-300/50">
+        <pre class="text-gray-700 text-sm whitespace-pre-wrap font-mono" x-text="apiResponse"></pre>
+      </div>
+
+
+      <div x-show="apiError" class="p-5 bg-rose-50 rounded-xl mb-4 border border-rose-200">
+        <p class="text-rose-700" x-text="apiError"></p>
+      </div>
+
+
+      <div class="mt-6 flex justify-end">
+        <button type="button" @click="apiResponseModal=false" class="btn-primary px-6 py-2 rounded-xl">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('app', () => ({
+        config:{
+          carMake:'', carModel:'', customCarModel:'',
+          carColor:'', sceneType:'', cameraMovement:'', lighting:'', weather:'', filmStyle:'',
+          additionalElements:{reflections:false, motionBlur:false, lensFlare:false, depthOfField:false, slowMotion:false, rainDrops:false}
+        },
+        generatedPrompt:'', copied:false, isGenerating:false, isSending:false,
+        loadPresetModal:false, apiResponseModal:false, apiResponse:'', apiError:'',
+        recentPrompts:[], presets:[],
+        generationSeed: 0, // For varying prompts on each generation
+
+
+        init(){ this.loadRecentPrompts(); this.loadPresets(); },
+
+
+        get wordCount(){ return this.generatedPrompt ? this.generatedPrompt.trim().split(/\s+/).length : 0; },
+        get charCount(){ return this.generatedPrompt ? this.generatedPrompt.length : 0; },
+
+
+        generatePrompt(){
+          if(!this.config.carMake || !this.config.carModel || !this.config.sceneType){
+            return this.showAlert('Please select a car make, model, and scene type.');
+          }
+          this.isGenerating = true;
+          this.generationSeed++; // Increment to ensure variation
+
+
+          setTimeout(() => {
+            const carModel = this.config.carModel === 'Custom Model' ? (this.config.customCarModel || 'Custom') : this.config.carModel;
+            const colorDesc = this.config.carColor ? `${this.config.carColor.toLowerCase()}, ` : '';
+            const sceneDesc = this.config.sceneType.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+            const weatherDesc = this.config.weather ? ` ${this.config.weather.toLowerCase()}` : '';
+            const lightingDesc = this.config.lighting ? ` ${this.config.lighting.toLowerCase()} illumination` : '';
+            const cameraDesc = this.getRandomCameraPrefix();
+            const filmStyle = this.getFilmStyleAdjective();
+            const filmDesc = this.getFilmStyleDescription();
+
+
+            // Enhanced additional elements with varied, non-repeating phrasing
+            const add = [];
+            const ae = this.config.additionalElements;
+            if(ae.reflections) add.push('mirror-like surface gleams and polished accents');
+            if(ae.motionBlur) add.push('trailing velocity streaks for velocity emphasis');
+            if(ae.lensFlare) add.push('genuine optical flares and ethereal beams');
+            if(ae.depthOfField) add.push('selective focus with creamy background blur');
+            if(ae.slowMotion) add.push('graceful time-lapse fluidity');
+            if(ae.rainDrops) add.push('streaking water beads on the viewport');
+
+            const additionalDesc = add.length ? `, incorporating ${add.join(', ')}` : '';
+
+
+            // Varied action verbs and descriptors to prevent repetition and ensure newness
+            const actions = ['racing fiercely', 'gliding smoothly', 'accelerating powerfully', 'weaving nimbly', 'charging boldly', 'surging ahead'];
+            const details = ['precision-engineered contours', 'aggressive aerodynamic lines', 'robust suspension dynamics', 'high-performance alloy wheels', 'ventilated brake calipers', 'sleek headlight arrays'];
+            const env = ['surrounding terrain details', 'ambient atmospheric haze', 'textured pavement grip', 'foliage rustle effects', 'horizon line expanse', 'skyline silhouette integration'];
+            const tech = ['ultra-high-definition clarity', 'wide-angle 16:9 framing', 'smooth 24fps progression', 'advanced HDR tone mapping', 'crisp edge definition', 'immersive spatial audio cues'];
+
+            const randAction = actions[this.generationSeed % actions.length];
+            const randDetail = details[(this.generationSeed * 2) % details.length];
+            const randEnv = env[(this.generationSeed * 3) % env.length];
+            const randTech = tech[(this.generationSeed * 4) % tech.length];
+
+
+            // Optimized prompt: Structured for AI video tools with vivid, unique phrasing, no word repetition
+            this.generatedPrompt = `Hyper-detailed ${filmStyle} ${cameraDesc}view capturing a elegant ${colorDesc}${this.config.carMake} ${carModel} ${randAction} along the ${sceneDesc}${weatherDesc} terrain${lightingDesc}${additionalDesc}. Emphasize ${randDetail}, road adhesion physics, and ecosystem fusion through god rays and atmospheric particles. Deliver in ${randTech}, evoking premium visual effects mastery${filmDesc ? ', enhanced by ' + filmDesc.toLowerCase() : '.'}.`;
+
+            this.saveRecentPrompt();
+            this.isGenerating = false;
+          }, 250);
+        },
+
+
+        getRandomCameraPrefix(){
+          const prefixes = [
+            'sweeping ', 'dynamic ', 'fluid ', 'intense ', 'epic ', 'intimate ', 'aerial '
+          ];
+          return prefixes[this.generationSeed % prefixes.length];
+        },
+
+
+        getFilmStyleAdjective(){
+          const adjectives = {
+            'Blockbuster': ['explosive action', 'thrilling spectacle', 'grand-scale drama'],
+            'Documentary': ['observational realism', 'raw authenticity', 'unfiltered truth'],
+            'Noir': ['shadowy intrigue', 'brooding tension', 'monotone mystery'],
+            'Sci-Fi': ['neon futurism', 'cybernetic vision', 'alien horizon'],
+            'Vintage': ['nostalgic patina', 'timeless allure', 'classic vibe'],
+            'Anamorphic': ['expansive vista', 'distorted panorama', 'broad canvas'],
+            'Gritty': ['urban edge', 'harsh realism', 'textured intensity']
+          };
+          const styleKey = this.config.filmStyle || 'Blockbuster';
+          const options = adjectives[styleKey] || ['professional cinematic'];
+          return options[this.generationSeed % options.length];
+        },
+
+
+        getFilmStyleDescription(){
+          const descriptions = {
+            'Blockbuster': ['vibrant explosions, sweeping panoramas, and pulse-racing edits.', 'intense pursuits, heroic angles, and orchestral swells.', 'blockbuster flair with explosive impacts and heroic arcs.'],
+            'Documentary': ['candid observations, natural soundscapes, and factual narratives.', 'unscripted moments, environmental context, and journalistic depth.', 'verité style highlighting mechanics and habitat integration.'],
+            'Noir': ['chiaroscuro contrasts, fateful undertones, and moral ambiguity.', 'venetian blinds shadows, rainy reflections, and cynical dialogue.', 'film-noir essence via stark visuals and enigmatic atmospheres.'],
+            'Sci-Fi': ['holographic interfaces, interstellar vistas, and tech anomalies.', 'quantum distortions, alien architectures, and speculative worlds.', 'speculative fiction through glowing circuits and cosmic backdrops.'],
+            'Vintage': ['faded celluloid, warm emulsions, and era-specific motifs.', 'scratchy overlays, sepia washes, and retro machinery.', 'bygone aesthetics with analog warmth and historical nods.'],
+            'Anamorphic': ['flared distortions, elongated horizons, and immersive scopes.', 'letterbox framing, oval bokeh, and majestic breadths.', 'panoramic technique yielding widescreen epics and lens artistry.'],
+            'Gritty': ['weathered textures, handheld tremors, and muted palettes.', 'industrial decay, candid grit, and visceral impacts.', 'street-level rawness via desaturated tones and authentic chaos.']
+          };
+          const styleKey = this.config.filmStyle || 'Blockbuster';
+          const options = descriptions[styleKey];
+          return options ? options[this.generationSeed % options.length] : 'sophisticated visuals merging pace and emotion.';
+        },
+
+
+        randomizeAll(){
+          const rand = a => a[Math.floor(Math.random()*a.length)];
+          const makes = ['Porsche','Tesla','BYD','NIO','Xpeng','Ferrari','Lamborghini'];
+          const models = {
+            Porsche:['911 GT3','Taycan Turbo S','Cayenne','Panamera'],
+            Tesla:['Model S Plaid','Model 3 Performance','Model X','Cybertruck'],
+            BYD:['Han EV','Tang EV','Seal','Dolphin'],
+            NIO:['ET7','ET5','ES8','EC7'],
+            Xpeng:['P7','G9','P5'],
+            Ferrari:['488 Spider','SF90 Stradale','Roma','F8 Tributo'],
+            Lamborghini:['Huracán','Aventador','Urus','Revuelto']
+          };
+          const colors = ['Midnight Black','Racing Red','Metallic Silver','Pearl White','Electric Blue','Chrome Gold','Matte Gray','Neon Green'];
+          const scenes = ['Urban Night','Mountain Road','Desert Highway','Coastal Drive','Rainy City','Snowy Landscape','Race Track','Cyberpunk City'];
+          const movements = ['Tracking Shot','Drone Flyover','FPV Racing','Steadicam Follow','Crane Shot','Dolly Zoom','Helicopter Chase'];
+          const lighting = ['Golden Hour','Neon Lights','Moonlit','High Contrast','Soft Diffused','Backlit','Practical Lights'];
+          const weatherList = ['Clear Skies','Light Rain','Heavy Rain','Foggy','Snowing','Windy','Stormy'];
+          const filmStyles = ['Blockbuster','Documentary','Noir','Sci-Fi','Vintage','Anamorphic','Gritty'];
+
+
+          const make = rand(makes);
+          const w = rand(weatherList);
+
+
+          this.config = {
+            carMake: make,
+            carModel: rand(models[make]),
+            customCarModel: '',
+            carColor: rand(colors),
+            sceneType: rand(scenes),
+            cameraMovement: rand(movements),
+            lighting: rand(lighting),
+            weather: w,
+            filmStyle: rand(filmStyles),
+            additionalElements: {
+              reflections: Math.random()>0.5,
+              motionBlur: Math.random()>0.5,
+              lensFlare: Math.random()>0.5,
+              depthOfField: Math.random()>0.5,
+              slowMotion: Math.random()>0.3,
+              // bug fix: use freshly chosen weather (w), not stale value
+              rainDrops: /Rain/i.test(w) && Math.random()>0.5
+            }
+          };
+        },
+
+
+        async copyToClipboard(){
+          try{
+            await navigator.clipboard.writeText(this.generatedPrompt);
+            this.copied = true; setTimeout(()=>this.copied=false, 1800);
+          }catch(e){
+            console.error(e);
+            this.showAlert('Copy failed. Try again or copy manually.');
+          }
+        },
+
+
+        async sendToAPI(){
+          if(!this.generatedPrompt){ return this.showAlert('Please generate a prompt first.'); }
+          this.isSending = true; this.apiError=''; this.apiResponse='';
+          try{
+            await new Promise(r=>setTimeout(r, 900)); // simulate
+            this.apiResponse = JSON.stringify({
+              status:'success',
+              job_id:`vid_${Math.random().toString(36).slice(2,10)}`,
+              estimated_time:45,
+              prompt:this.generatedPrompt
+            }, null, 2);
+            this.apiResponseModal = true;
+          }catch(err){
+            console.error(err);
+            this.apiError = 'Failed to connect to the API. Please try again later.';
+            this.apiResponseModal = true;
+          }finally{
+            this.isSending = false;
+          }
+        },
+
+
+        saveRecentPrompt(){
+          const entry = {
+            text:this.generatedPrompt,
+            wordCount:this.wordCount,
+            timestamp:new Date().toISOString(),
+            config:JSON.parse(JSON.stringify(this.config))
+          };
+          this.recentPrompts.unshift(entry);
+          if(this.recentPrompts.length>6) this.recentPrompts.pop();
+          localStorage.setItem('recentPrompts', JSON.stringify(this.recentPrompts));
+        },
+
+
+        loadRecentPrompt(i){
+          const p = this.recentPrompts[i];
+          if(!p) return;
+          this.generatedPrompt = p.text;
+          this.config = p.config;
+          window.scrollTo({top:0, behavior:'smooth'});
+        },
+
+
+        loadRecentPrompts(){
+          try{
+            const saved = localStorage.getItem('recentPrompts');
+            if(saved) this.recentPrompts = JSON.parse(saved);
+          }catch{}
+        },
+
+
+        savePreset(){
+          const defaultName = `${this.config.carMake} ${(this.config.carModel==='Custom Model' ? (this.config.customCarModel||'Custom') : this.config.carModel) || ''} — ${this.config.sceneType}`;
+          const name = prompt('Enter a name for this preset:', defaultName.trim());
+          if(!name) return;
+          const preset = { name, config:JSON.parse(JSON.stringify(this.config)), timestamp:new Date().toISOString() };
+          this.presets.unshift(preset);
+          localStorage.setItem('presets', JSON.stringify(this.presets));
+        },
+
+
+        loadPreset(i){
+          const p = this.presets[i]; if(!p) return;
+          this.config = JSON.parse(JSON.stringify(p.config));
+          this.loadPresetModal = false;
+          this.generatePrompt();
+        },
+
+
+        deletePreset(i){
+          if(!confirm('Delete this preset?')) return;
+          this.presets.splice(i,1);
+          localStorage.setItem('presets', JSON.stringify(this.presets));
+        },
+
+
+        loadPresets(){
+          try{
+            const saved = localStorage.getItem('presets');
+            if(saved) this.presets = JSON.parse(saved);
+          }catch{}
+        },
+
+
+        formatDate(iso){ const d = new Date(iso); return d.toLocaleString(); },
+
+
+        showAlert(msg){ alert(msg); }
+      }));
+    });
+  </script>
+</body>
+</html>
